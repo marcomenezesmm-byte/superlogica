@@ -1,0 +1,69 @@
+name: Terraform Apply (EC2 + MySQL + RDS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      destroy:
+        description: "Set to true to run terraform destroy instead of apply"
+        required: false
+        default: "false"
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      TF_IN_AUTOMATION: "true"
+      TF_INPUT: "false"
+      # Terraform variables (set these as repository variables or secrets as needed)
+      TF_VAR_project: "demo"
+      TF_VAR_allowed_cidr: "0.0.0.0/0"  # CHANGE THIS in repo variables for safety
+      TF_VAR_instance_type: "t3.micro"
+      TF_VAR_mysql_container_password: "ChangeMe123!"
+      TF_VAR_rds_instance_class: "db.t3.micro"
+      TF_VAR_rds_allocated_storage: "20"
+      TF_VAR_rds_publicly_accessible: "false"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: Terraform fmt
+        working-directory: terraform
+        run: terraform fmt -check
+
+      - name: Terraform init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform validate
+        working-directory: terraform
+        run: terraform validate
+
+      - name: Terraform plan
+        working-directory: terraform
+        run: terraform plan -out=tfplan
+
+      - name: Terraform apply / destroy
+        working-directory: terraform
+        run: |
+          if [ "${{ github.event.inputs.destroy }}" = "true" ]; then
+            terraform destroy -auto-approve
+          else
+            terraform apply -auto-approve tfplan
+          fi
