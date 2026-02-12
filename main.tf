@@ -111,7 +111,7 @@ resource "random_password" "rds_master" {
 }
 
 resource "aws_db_instance" "mysql" {
-  identifier              = "${var.project}-mysql"
+  identifier              = "${lower(var.project)}-mysql"
   engine                  = "mysql"
   engine_version          = "8.0"
   instance_class          = var.rds_instance_class
