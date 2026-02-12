@@ -1,7 +1,7 @@
 variable "project" {
   description = "Project name prefix for resource naming."
   type        = string
-  default     = "demo"
+  default     = "Demo"
 }
 
 variable "aws_region" {
@@ -13,6 +13,7 @@ variable "aws_region" {
 variable "allowed_cidr" {
   description = "CIDR allowed to access EC2 (SSH and MySQL). Example: 203.0.113.10/32"
   type        = string
+  default     = "179.209.185.111/32"
 }
 
 variable "instance_type" {
@@ -24,7 +25,7 @@ variable "instance_type" {
 variable "key_name" {
   description = "Optional existing EC2 Key Pair name for SSH access."
   type        = string
-  default     = ""
+  default     = "EC2"
 }
 
 variable "mysql_container_password" {
