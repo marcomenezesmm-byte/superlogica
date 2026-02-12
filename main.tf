@@ -96,7 +96,7 @@ resource "aws_security_group" "rds_mysql_sg" {
 }
 
 resource "aws_db_subnet_group" "default" {
-  name       = "${var.project}-default-subnets"
+  name       = "${lower(var.project)}-default-subnets"
   subnet_ids = data.aws_subnets.default.ids
 
   tags = {
