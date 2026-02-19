@@ -1,0 +1,37 @@
+
+locals {
+  user_data = <<-EOF
+    #!/bin/bash
+    set -euo pipefail
+
+    dnf update -y
+    dnf install -y docker
+
+    systemctl enable docker
+    systemctl start docker
+
+    # Run MySQL in Docker (simple demo)
+    docker pull mysql:8.0
+
+    docker run -d --name mysql-demo \
+      -e MYSQL_ROOT_PASSWORD='${var.mysql_container_password}' \
+      -p 3306:3306 \
+      --restart unless-stopped \
+      mysql:8.0
+
+    EOF
+}
+
+resource "aws_instance" "mysql_ec2" {
+  ami                    = data.aws_ami.al2023.id
+  instance_type          = var.instance_type
+  vpc_security_group_ids = [aws_security_group.ec2_mysql_sg.id]
+
+  key_name  = var.key_name != "" ? var.key_name : null
+  user_data = local.user_data
+
+  tags = {
+    Name    = "${var.project}-mysql-ec2"
+    Project = var.project
+  }
+}
