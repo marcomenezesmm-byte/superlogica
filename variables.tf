@@ -11,9 +11,9 @@ variable "aws_region" {
 }
 
 variable "allowed_cidr" {
-  description = "CIDR allowed to access EC2 (SSH and MySQL). Example: 203.0.113.10/32"
+  description = "CIDR allowed to access EC2 (SSH and MySQL). Example: 45.225.195.207/32"
   type        = string
-  default     = "179.209.185.111/32"
+  default     = "45.225.195.207/32"
 }
 
 variable "instance_type" {
