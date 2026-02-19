@@ -1,4 +1,7 @@
-
+import {
+  to = aws_db_subnet_group.default
+  id = "demo-default-subnets"
+}
 
 
 resource "aws_db_subnet_group" "default" {
@@ -15,6 +18,8 @@ resource "random_password" "rds_master" {
   special          = true
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
+
+
 
 resource "aws_db_instance" "mysql" {
   identifier              = "${lower(var.project)}-mysql"
