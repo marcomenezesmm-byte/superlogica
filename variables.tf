@@ -25,7 +25,7 @@ variable "instance_type" {
 variable "key_name" {
   description = "Optional existing EC2 Key Pair name for SSH access."
   type        = string
-  default     = "EC2"
+  default     = "ec2"
 }
 
 variable "mysql_container_password" {
